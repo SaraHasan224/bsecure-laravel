@@ -1,0 +1,56 @@
+{
+  "name": "sarahasan/bsecure-laravel-test",
+  "description": "Pakistan's first universal checkout solution for e-commerce stores built on woocommerce, magento, shopify and more",
+  "type": "library",
+  "keywords": [
+    "bsecure",
+    "universal-checkout",
+    "payment-gateway",
+    "ecommerce",
+    "e-commerce",
+    "two-step-checkout",
+    "sso",
+    "single-sign-on",
+    "universal-login",
+    "frictionless payment"
+  ],
+  "homepage": "https://github.com/bSecureCheckout/bsecure-laravel",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "bSecure",
+      "email": "tech@bsecure.pk"
+    }
+  ],
+  "minimum-stability": "dev",
+  "require": {
+    "guzzlehttp/guzzle": "^7.1@dev",
+    "php": ">=5.6"
+  },
+  "require-dev": {
+  },
+  "suggest": {
+    "guzzlehttp/guzzle": "Required to use the bSecure checkout and sso facade and call bSecure server (7.1@dev)."
+  },
+  "autoload": {
+    "psr-4": {
+      "bSecure\\UniversalCheckout\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "bSecure\\UniversalCheckout\\CheckoutServiceProvider",
+        "bSecure\\UniversalCheckout\\SSOServiceProvider"
+      ],
+      "aliases": {
+        "BsecureCheckout": "bSecure\\UniversalCheckout\\CheckoutFacade",
+        "BsecureSSO": "bSecure\\UniversalCheckout\\SSOFacade"
+      }
+    }
+  }
+}
