@@ -94,6 +94,27 @@ class BsecureCheckout extends Facade
     }
 
     /*
+     *  CREATE ORDER: Set Order Charges
+    */
+
+    public function setOrderCharges($object)
+    {
+        try {
+            $order = new CreateOrderController();
+            $orderCharges = $order->_setCharges($object);
+
+            $this->orderPayload['sub_total_amount'] = $orderCharges['sub_total_amount'];
+            $this->orderPayload['discount_amount'] = $orderCharges['discount_amount'];
+            $this->orderPayload['total_amount'] = $orderCharges['total_amount'];
+
+            return $this->orderPayload;
+            //code...
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    /*
      *  CREATE ORDER: Create Order using Merchant Access Token from Merchant backend server
     */
     public function createOrder()

@@ -43,16 +43,22 @@ By following a few simple steps, you can set up your **bSecure Checkout** and **
 
 #### Getting Your Credentials
 
-1. Go to [Partners Portal](https://builder.bsecure.pk/)
-2. [App Integration](https://builder.bsecure.pk/integration-sandbox) >> Sandbox / Live
-3. Select Environment Type (Custom Integration)
-4. Fill following fields:\
-    a. *Store URL* its required in any case\
-    b. *Login Redirect URL* Required for feature **Login with bSecure**\
-    c. *Checkout Redirect URL* Required for feature **Pay with bSecure**\
-    d. *Checkout Order Status webhook* Required for feature **Pay with bSecure**
-5. Save your client credentials (Client ID and Client Secret)
-6. Please make sure to keep credentials at safe place in your code
+1. Go to [Builders Portal](https://builder.bsecure.pk/)
+2. [App Integration](https://builder.bsecure.pk/integration-live) >> Enable keys for the environment  Live / Sandbox 
+3. Save & Copy your credentials (Client ID & Client Secret).
+4. Please make sure to keep credentials at safe place in your code
+5. Select My Stores. And create a new store by clicking on the button.
+6. Select Integration Type (Custom Integration)
+7. Fill following fields:\
+    a. *Store Name* its required in any case\
+    b. *Store URL* its required in any case\
+    c. *Product detail URL* Required for feature **Manual Orders**\
+    d. *Login Redirect URL* Required for feature **Login with bSecure**\
+    e. *Checkout Redirect URL* Required for feature **Pay with bSecure**\
+    f. *Checkout Order Status webhook* Required for feature **Pay with bSecure**\
+    g. *Minimum order amount to ask for CNIC* its optional in any case\
+    h. *Minimum cart value to proceed to checkout* its optional in any case\
+
 
 
 ## bSecure Checkout
@@ -82,6 +88,7 @@ return [
   'client_secret' => env('BSECURE_CLIENT_SECRET',''),
 
   'environment' => env('BSECURE_ENVIRONMENT'),
+  'store_id' => env('BSECURE_STORE_ID'),
 ];
 ```
 
@@ -112,24 +119,6 @@ Products object should be in below mentioned format:
 ]
 ```
 
-###### Product Options Object:
-
-Products object should be in below mentioned format:
-```
-'product_options' =>  
-    array (
-      0 => array (
-              'id' => 'option-id(numeric)',
-              'name' => 'option-name',
-              'value' => array (
-                0 => array (
-                        'name' => 'option-value-name',
-                        'price' => 'option-value-price',
-                     ),   
-              ),
-           ),   
-    ),
-```
 ###### Shipment Object
 
 Shipment object should be in below mentioned format:
@@ -184,8 +173,10 @@ In response createOrder(), will return order expiry, checkout_url, order_referen
 array (
   'expiry' => '2020-11-27 10:55:14',
   'checkout_url' => 'bSecure-checkout-url',
+  'store_url' => 'store-url',
+  'merchant_store_name' => 'your-store-name',
   'order_reference' => 'bsecure-reference',
-  'merchant_order_id' => 'your-order-id',
+  'merchant_order_id' => 'your-order-id'
 ) 
 ```
 >If you are using a web-solution then simply redirect the user to checkout_url
@@ -300,24 +291,24 @@ In response of "**[Callback on Order Placement](#callback-on-order-placement)**"
 
 #### Payment Status
 
-| ID  | Value     | Description                                                         |
-| :-: | :-------- | :------------------------------------------------------------------ |
-|  0  | Pending   | Order received, no payment initiated.Awaiting payment (unpaid).     |
-|  1  | Completed | Order fulfilled and complete. Payment also recieved.                |
-|  2  | Failed    | Payment failed or was declined (unpaid) or requires authentication. |
+| ID  | Value     | Description                                                                    |
+| :-: | :-------- | :----------------------------------------------------------------------------- |
+|  0  | Pending   | Order placed. But payment is awaiting for fulfillment by the customer.         |
+|  1  | Completed | Order fulfilled, placed and payment has also been received.                    |
+|  2  | Failed    | Payment failed or was declined or maximum attempt for payment request reached. |
 
 #### Order Status
 
-| ID  | Value                 | Description                                                                                                                       |
-| :-: | :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
-|  1  | Created               | A customer created an order but not landed on bsecure                                                                             |
-|  2  | Initiated             | Order is awaiting fulfillment.                                                                                                    |
-|  3  | Placed                | Order fulfilled and complete Payment received. Order is awaiting fulfillment. – requires no further action                        |
-|  4  | Awaiting Confirmation | Awaiting action by the customer to authenticate the transaction.                                                                  |
-|  5  | Canceled              | Canceled by an admin or the customer.                                                                                             |
-|  6  | Expired               | Orders that were not fulfilled within a pre-specified timeframe. timeframe                                                        |
-|  7  | Failed                | Payment failed or was declined (unpaid).Note that this status may not show immediately and instead show as Pending until verified |
-|  8  | Awaiting Payment      | Order received, no payment initiated. Awaiting payment (unpaid)                                                                   |
+| ID  | Value                 | Description                                                                                                                        |
+| :-: | :-------------------- | :--------------------------------------------------------------------------------------------------------------------------------  |
+|  1  | Created               | Order created by merchant	                                                                                                       |
+|  2  | Initiated             | Customer landed on bSecure checkout URL. Order is awaiting fulfillment.                                                            |
+|  3  | Placed                | Customer successfully placed the order                                                                                             |
+|  4  | Awaiting Confirmation | Customer successfully placed the order, but is awaiting for customer confirmation to authenticate the transaction.                 |
+|  5  | Canceled              | Customer cancelled the order at the time of confirmation.                                                                          |
+|  6  | Expired               | Order not processed within expected time frame. timeframe                                                                          |
+|  7  | Failed                | Max payment attempt reached                                                                                                        |
+|  8  | Awaiting Payment      | Customer successfully placed the order, but is payment is due or awaiting payment                                                  |
 
 
 ## bSecure Single Sign On (SSO)

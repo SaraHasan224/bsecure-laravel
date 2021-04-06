@@ -17,6 +17,7 @@ class Merchant extends Model
         $merchantClientSecret = config('bSecure.client_secret');
 
         $merchantAppCredentials = ClientApp::verifyAppCredentials($merchantClientId, $merchantClientSecret);
+        $merchantAppCredentials['store_id'] = config('bSecure.store_id');
 
         if (empty($merchantAppCredentials)) {
             return ['error' => true, 'message' => trans('bSecure::messages.client.invalid')];

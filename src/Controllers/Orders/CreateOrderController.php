@@ -47,99 +47,19 @@ class CreateOrderController extends Controller
     }
 
 
-    public function _setProductsDataStructure($products)
+    public function _setCharges($object)
     {
-        $orderData = [
-          'products' => null,
-          'sub_total_amount' => null,
-          'discount_amount' => null,
-          'total_amount' => null,
-        ];
-
-        if(!empty($products))
-        {
-
-            $orderItems = [];
-            $sub_total_amount = 0;
-            $total_discount = 0;
-            $orderItems['products'] = [];
-
-            foreach ($products as $key => $product) {
-                //Product Price
-                $price = $product['price'] ;
-                $sale_price = $product['sale_price'];
-                $quantity = $product['quantity'] ?? 1;
-
-                //Product options
-                $product_options = $this->_setProductOptionsDataStructure($product);
-
-                $options_price = $product_options['price'];
-                $options = $product_options['options'];
-
-
-                #Product charges
-                $discount = ( $price - $sale_price ) * $quantity;
-                $product_price = ( $price + $options_price ) * $quantity;
-                $product_sub_total = ( $price + $options_price ) * $quantity;
-
-                $orderItems['products'][] = [
-                  "id" => $product['id'],
-                  "name" => $product['name'],
-                  "sku" => $product['sku'],
-                  "quantity" => $quantity,
-                  "price" => $price,
-                  "sale_price" => $sale_price,
-                  "discount" => $discount,
-                  "sub_total" => $product_price,
-                  "image" => $product['image'],
-                  "short_description" => $product['short_description'],
-                  "description" => $product['description'],
-                  "product_options" => $options
-                ];
-
-                $total_discount += $discount;
-                $sub_total_amount += $product_sub_total;
-            }
-
-            $order_grand_total = $sub_total_amount-$total_discount;
-
-            $orderData['products'] = $orderItems['products'];
-            $orderData['sub_total_amount'] = $sub_total_amount;
-            $orderData['discount_amount'] = $total_discount;
-            $orderData['total_amount'] = $order_grand_total;
-        }
+        $orderData['sub_total_amount'] = array_key_exists('sub_total_amount',$object ) ? $object['sub_total_amount'] : null;
+        $orderData['discount_amount'] = array_key_exists('discount_amount',$object ) ? $object['discount_amount'] : null;
+        $orderData['total_amount'] = array_key_exists('total_amount',$object ) ? $object['total_amount'] : null;
         return $orderData;
     }
 
-
-    public function _setProductOptionsDataStructure($product)
+    public function _setProductsDataStructure($products)
     {
-        $product_options = array_key_exists('product_options',$product) ? $product['product_options'] : [];
-
-        $price = 0;
-        if( isset($product_options) && !empty($product_options) )
-        {
-            foreach( $product_options as $productOption )
-            {
-                $productValue = array_key_exists('value',$productOption) ? $productOption['value'] : [];
-                foreach( $productValue as $key => $optionValue )
-                {
-                    $optionPrice = array_key_exists('price',$optionValue) ? $optionValue['price'] : [];
-                    if(!empty($optionPrice))
-                    {
-                        #Price ++
-                        $price += $optionPrice;
-                    }
-                }
-            }
-        }
-
-        return [
-          'price' => $price,
-          'options'  => $product_options
-        ];
+        $orderData['products'] = $products;
+        return $orderData;
     }
-
 
     public function _setCustomer($customerData)
     {
@@ -166,8 +86,6 @@ class CreateOrderController extends Controller
 
         return $customer;
     }
-
-
 
     public function _setShipmentDetails($shipmentData)
     {

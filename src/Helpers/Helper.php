@@ -57,10 +57,13 @@ class Helper
         $http = new Client();
         $authUrl = Constant::AUTH_SERVER_URL . Constant::API_ENDPOINTS['oauth'];
 
+        $storeId =  array_key_exists('store_id',$data) ? $data['store_id'] : null;
+        $clientId = !empty($storeId) ? $data['client_id'].':'.$storeId : $data['client_id'];
+
         $response = $http->post($authUrl, [
             'form_params' => [
                 'grant_type' => 'client_credentials',
-                'client_id' => $data['client_id'],
+                'client_id' => $clientId,
                 'client_secret' => $data['client_secret'],
                 'scope' => "",
             ],
